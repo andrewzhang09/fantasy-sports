@@ -7,6 +7,8 @@ def get_player_num_games(date, schedule):
     # Input: takes in datetime object and player schedule
     # Output: number of games a player has this week given their schedule dict
     # find index of the most recent Monday w/ respect to start of NBA season
+
+    # TODO: change to current time instead of starting from Monday, accounting for UTC time diff
     curr_weekday = date.weekday()
     time_diff = date - FIRST_DAY
     days_since_start = time_diff.days
@@ -25,6 +27,8 @@ def get_projections(team_id, time_interval, ir, four_game_proj=False):
     # ERRORS: PLAYER MIGHT NOT HAVE 'time_interval' FIELD (eg. '2024 projections') eg. Goga Bitadze
     # ERRORS: PLAYER MIGHT NOT HAVE 'avg' field in their player.stats.get('time_interval') eg. Ja Morant
     # ANOTHER ERROR: player might not have a certain stat (eg. center with 3ptm) eg. Ivica Zubac
+
+    # TODO: if current_matchup is True, calculate num_games starting from current date
     ROSTER_STATS = {cat: 0 for cat in CATEGORIES}
     team_roster = TEAM_MAP.get(team_id).get('roster', [])
     for player in team_roster:
