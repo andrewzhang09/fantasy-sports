@@ -69,7 +69,7 @@ def get_player_num_games(date, schedule):
 
 
 ## get projections based on averages for players on team roster for CURRENT week
-def get_projections(team_id, time_interval, project_trade=False):
+def get_projections(team_id, time_interval, ir, four_game_proj=False):
     # time_interval : last 15, last 30, etc.
     # ERRORS: PLAYER MIGHT NOT HAVE 'time_interval' FIELD (eg. '2024 projections') eg. Goga Bitadze
     # ERRORS: PLAYER MIGHT NOT HAVE 'avg' field in their player.stats.get('time_interval') eg. Ja Morant
@@ -77,8 +77,11 @@ def get_projections(team_id, time_interval, project_trade=False):
     ROSTER_STATS = {cat: 0 for cat in CATEGORIES}
     team_roster = TEAM_MAP.get(team_id).get('roster', [])
     for player in team_roster:
+        if player.name in ir:
+            continue
         sched = player.schedule
-        if project_trade:
+        # standardize projections to 4 games for each player
+        if four_game_proj:
             num_games = 4
         else:
             num_games = get_player_num_games(datetime.datetime.now(), sched)
@@ -97,7 +100,7 @@ def get_projections(team_id, time_interval, project_trade=False):
         del ROSTER_STATS[cat]
     return ROSTER_STATS
 
-
+## DEPRECATED
 def get_opponent_team_id(id1, matchup_num):
     team1_sched = TEAM_MAP.get(id1).get('schedule')
     home_team = team1_sched[matchup_num - 1].home_team
@@ -109,19 +112,19 @@ def get_opponent_team_id(id1, matchup_num):
     return opponent.team_id
 
 
-def project_matchup(id1, matchup_num, time_interval, id2=-1):
+def project_matchup(id1, opponent_team_id, time_interval, ir, four_game_proj=False):
     # NOTE: ID1 IS YOUR TEAM
     # ex. time_interval: last 7, last 15
-    if id2 >= 0:
-        opponent_team_id = id2
-    else:
-        opponent_team_id = get_opponent_team_id(id1, matchup_num)
 
+    # else:
+    #     opponent_team_id = get_opponent_team_id(id1, matchup_num)
     opponent_team_name = TEAM_MAP.get(opponent_team_id).get('team_name')
     print(TEAM_MAP.get(id1).get('team_name') + ' vs. ' + opponent_team_name)
-    team1_projections = get_projections(id1, time_interval)
-    team2_projections = get_projections(opponent_team_id, time_interval)
+
+    team1_projections = get_projections(id1, time_interval, ir, four_game_proj)
+    team2_projections = get_projections(opponent_team_id, time_interval, ir, four_game_proj)
     print(time_interval)
+
     category_wins, category_ties, category_losses = 0, 0, 0
     MATCHUP_MAP = {}
     for cat in NINE_CATS:
@@ -142,12 +145,45 @@ def project_matchup(id1, matchup_num, time_interval, id2=-1):
     print(str(category_wins) + '-' + str(category_losses) + '-' + str(category_ties))
     return MATCHUP_MAP
 
-print("Projecting next week's matchup")
-pprint(project_matchup(ANDREW_ID, 9, PLAYER_AVG_STAT_INTERVALS.LAST_15))
+## DEPRECATE IN FUTURE
+IR_MAP = {
+    JUSTIN_ID: None,
+    ERKAN_ID: 'Jalen Duren',
+    ALBERT_ID: 'Wendell Carter Jr.',
+    ANTHONY_ID: 'Jalen Johnson',
+    VIJAY_ID: 'Bradley Beal',
+    SADYANT_ID: None,
+    JEFFREY_ID: None,
+    ETHAN_ID: 'Marcus Smart',
+    LUCAS_ID: 'Mitchell Robinson',
+    ALLAN_ID: 'Bam Adebayo',
+    ERNESTO_ID: None,
+    ANDREW_ID: None
+}
 
-print("Projecting how you currently stand against Lucas")
-pprint(project_matchup(ANDREW_ID, -1, PLAYER_AVG_STAT_INTERVALS.LAST_15, LUCAS_ID))
+def generate_all_projections(id, time_interval):
+    for opponent_team_id in range(1, 13):
+        if opponent_team_id == id:
+            continue
+        pprint(project_matchup(id,
+                               opponent_team_id,
+                               time_interval,
+                               (IR_MAP.get(id), IR_MAP.get(opponent_team_id)),
+                               True))
 
+# print("Projecting next week's matchup")
+# pprint(project_matchup(ANDREW_ID, 
+#                        VIJAY_ID, 
+#                        PLAYER_AVG_STAT_INTERVALS.LAST_15, 
+#                        (None, 'Bradley Beal')))
+
+# print("Projecting how you currently stand against Lucas")
+# pprint(project_matchup(ANDREW_ID, 
+#                        LUCAS_ID, 
+#                        PLAYER_AVG_STAT_INTERVALS.LAST_15, 
+#                        (None, 'Mitchell Robinson')))
+print('Projecting Matchups')
+generate_all_projections(ANDREW_ID, PLAYER_AVG_STAT_INTERVALS.LAST_30)
 ## compare trade for player
 
 ## stretch goals: TRADE TARGETS TO BEST IMPROVE TEAM
