@@ -30,6 +30,10 @@ def project_matchup(id1, opponent_team_id, time_interval, ir, four_game_proj=Fal
             else:
                 category_losses += 1
         cat_diff = team1_projections.get(cat) - team2_projections.get(cat)
-        MATCHUP_MAP[cat] = (team1_projections.get(cat), team2_projections.get(cat), cat_diff)
+        MATCHUP_MAP[cat] = (round(team1_projections.get(cat), 4),
+                            round(team2_projections.get(cat), 4),
+                            round(cat_diff, 4))
+    
     print(str(category_wins) + '-' + str(category_losses) + '-' + str(category_ties))
+    MATCHUP_MAP['box_score'] = str(category_wins) + '-' + str(category_losses) + '-' + str(category_ties)
     return MATCHUP_MAP

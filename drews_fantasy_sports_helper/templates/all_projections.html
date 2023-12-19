@@ -35,21 +35,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for t, matchup_dict in all_matchups.items() %}
+            {% for id_tuple, matchup_dict in all_matchups.items() %}
                 <tr>
-                    <td><strong>{{ team_map.get(t[1]).get('team_name') }}</strong></td>
+                    <td><strong>{{ team_names.get(id_tuple[1]) }}</strong></td>
                     {% for cat in nine_cats %}
                         {% if (matchup_dict.get(cat)[0] > matchup_dict.get(cat)[1] and cat != 'TO') or 
                             (cat == 'TO' and matchup_dict.get(cat)[1] > matchup_dict.get(cat)[0]) %}
-                            <td class="light-green-cell">{{ matchup_dict.get(cat)[1] }}</td>
+                            <td class="light-green-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
                         {% elif (matchup_dict.get(cat)[1] > matchup_dict.get(cat)[0] and cat != 'TO') or 
                             (cat == 'TO' and matchup_dict.get(cat)[0] > matchup_dict.get(cat)[1])%}
-                            <td class="light-red-cell">{{ matchup_dict.get(cat)[1] }}</td>
+                            <td class="light-red-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
                         {% else %}
-                            <td>{{ matchup_dict.get(cat)[1] }}</td>
+                            <td>{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
                         {% endif %}
                     {% endfor %}
-                    <td>0-0-0</td>
+                    <td>{{ matchup_dict.get('box_score') }}</td>
                 </tr>
             {% endfor %}
         </tbody>

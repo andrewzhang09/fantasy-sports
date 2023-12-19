@@ -21,15 +21,17 @@
             </tr>
         </thead>
         <tbody>
-            {% for cat, tuple in matchup_map.items() %}
+            {% for cat in nine_cats %}
                 <tr>
                     <td><strong>{{ cat }}</strong></td>
-                    {% for elem in tuple %}
-                        <td>{{ elem }}</td>
+                    {% for i in range(3) %}
+                        <td>{{ matchup_map.get(cat)[i] }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <h2>{{ matchup_map.get('box_score') }}</h2>
 </body>
 </html>

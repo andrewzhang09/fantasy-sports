@@ -12,6 +12,7 @@ TT_LEAGUE = League(league_id=LEAGUE_ID, year=YEAR, espn_s2=ESPN_S2, swid=SWID)
 
 # creating a map of team id's to team name and team owners
 TEAM_MAP = {}
+TEAM_NAMES = {}
 for team in TT_LEAGUE.teams:
     TEAM_MAP[team.team_id] = {
         'team_name': team.team_name,
@@ -19,6 +20,7 @@ for team in TT_LEAGUE.teams:
         'roster': team.roster,
         'schedule': team.schedule
     }
+    TEAM_NAMES[team.team_id] = team.team_name
 
 CATEGORIES = ['FGM', 'FGA', 'FTM', 'FTA', '3PTM', 'REB', 'AST', 'STL', 'BLK', 'TO', 'PTS']
 NINE_CATS = ['FG%', 'FT%', '3PTM', 'REB', 'AST', 'STL', 'BLK', 'TO', 'PTS']
