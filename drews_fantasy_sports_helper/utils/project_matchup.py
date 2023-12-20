@@ -6,7 +6,8 @@ from pprint import pprint
 
 PLAYER_AVG_STAT_INTERVALS = AvgStatIntervals()
 
-def project_matchup(id1, opponent_team_id, time_interval, ir, is_curr_matchup=False):
+
+def project_matchup(id1, opponent_team_id, time_interval, is_curr_matchup=False, trade_dict={}):
     # NOTE: ID1 IS YOUR TEAM
     # ex. time_interval: last 7, last 15
     opponent_team_name = TEAM_MAP.get(opponent_team_id).get('team_name')
@@ -20,8 +21,14 @@ def project_matchup(id1, opponent_team_id, time_interval, ir, is_curr_matchup=Fa
         pprint(MATCHUP_MAP)
 
     # THESE INCLUDE FTM, FTA, ETC. CALCULATE AT THE END
-    team1_projections = get_projections(id1, time_interval, ir, is_curr_matchup)
-    team2_projections = get_projections(opponent_team_id, time_interval, ir, is_curr_matchup)
+    if not trade_dict:
+        team1_projections = get_projections(id1, time_interval, is_curr_matchup)
+        team2_projections = get_projections(opponent_team_id, time_interval, is_curr_matchup)
+    else:
+        # team1 is after trade, team2 is before trade
+        team1_projections = get_projections(id1, time_interval, is_curr_matchup, trade_dict)
+        team2_projections = get_projections(id1, time_interval, is_curr_matchup)
+
     print(time_interval)
 
     for cat in CATEGORIES:
@@ -60,8 +67,7 @@ def project_matchup_handler():
     # TODO: change so that we don't manually have to code in inputs
     MATCHUP_MAP = project_matchup(ANDREW_ID, 
                                   VIJAY_ID, 
-                                  PLAYER_AVG_STAT_INTERVALS.LAST_30, 
-                                  ('Kristaps Porzingis', 'Bradley Beal'),
+                                  PLAYER_AVG_STAT_INTERVALS.LAST_30,
                                   True)
     return render_template('project_matchup.html', 
                            matchup_map=MATCHUP_MAP, 

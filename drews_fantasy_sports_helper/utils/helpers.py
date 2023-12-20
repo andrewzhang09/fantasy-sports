@@ -1,7 +1,9 @@
 import datetime
 from pprint import pprint
 
-from ..constants import FIRST_DAY, CATEGORIES, NINE_CATS, TEAM_MAP, TT_LEAGUE
+from ..constants import FIRST_DAY, CATEGORIES, NINE_CATS, TEAM_MAP, TT_LEAGUE, AvgStatIntervals
+
+PlayerAvgStatIntervals = AvgStatIntervals()
 
 def calculate_win_loss(MATCHUP_MAP):
     # returns a tuple of (wins, losses, ties)
@@ -72,7 +74,7 @@ def get_player_num_games(date, schedule):
 
 
 ## get projections based on averages for players on team roster for CURRENT week
-def get_projections(team_id, time_interval, ir, is_curr_matchup=False):
+def get_projections(team_id, time_interval, is_curr_matchup=False, trade_dict={}):
     # time_interval : last 15, last 30, etc.
     # ERRORS: PLAYER MIGHT NOT HAVE 'time_interval' FIELD (eg. '2024 projections') eg. Goga Bitadze
     # ERRORS: PLAYER MIGHT NOT HAVE 'avg' field in their player.stats.get('time_interval') eg. Ja Morant
@@ -81,7 +83,7 @@ def get_projections(team_id, time_interval, ir, is_curr_matchup=False):
     ROSTER_STATS = {cat: 0 for cat in CATEGORIES}
     team_roster = TEAM_MAP.get(team_id).get('roster', [])
     for player in team_roster:
-        if player.name in ir:
+        if player.lineupSlot == 'IR':
             continue
         sched = player.schedule
         # standardize projections to 4 games for each player
@@ -98,4 +100,29 @@ def get_projections(team_id, time_interval, ir, is_curr_matchup=False):
 
         for cat in CATEGORIES:
             ROSTER_STATS[cat] += num_games * player_avg_stats.get(cat, 0)
+    
+    # add player stats that you are receiving, subtract the ones you trade away
+    num_games = 4
+    if trade_dict:
+        pprint(trade_dict)
+        players_trading, players_receiving = trade_dict.get('trade', []), trade_dict.get('receive', [])
+        for player in players_receiving:
+            # for some reason, these player stats only have the '2024 total' and '2024 projected' fields
+            player_avg_stats = player.stats.get(PlayerAvgStatIntervals.TOTAL, {})
+            if 'avg' not in player_avg_stats:
+                continue
+            player_avg_stats = player_avg_stats.get('avg')
+
+            for cat in CATEGORIES:
+                ROSTER_STATS[cat] += num_games * player_avg_stats.get(cat, 0)
+
+        for player in players_trading:
+            player_avg_stats = player.stats.get(PlayerAvgStatIntervals.TOTAL, {})
+            if 'avg' not in player_avg_stats:
+                continue
+            player_avg_stats = player_avg_stats.get('avg')
+
+            for cat in CATEGORIES:
+                ROSTER_STATS[cat] -= num_games * player_avg_stats.get(cat, 0)
+    
     return ROSTER_STATS

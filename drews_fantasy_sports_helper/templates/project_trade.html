@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Matchup</title>
+
+    <style>
+        .light-green-cell {
+            background-color: #c8e6c9; /* Light green color */
+        }
+
+        .light-red-cell {
+            background-color: #ffcdd2; /* Light red color */
+        }
+    </style>
+</head>
+<body>
+    <h1>Project Trade: {{ teams[0] }}</h1>
+
+    <h2>{{ time_interval }}</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>After Trade</th>
+                <th>Before Trade</th>
+                <th>Category Difference</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in nine_cats %}
+                <tr>
+                    <td><strong>{{ cat }}</strong></td>
+                    <td>{{ team1_roster.get(cat)[0] }}</td>
+                    <td>{{ team1_roster.get(cat)[1] }}</td>
+                    {% if (team1_roster.get(cat)[2] > 0 and cat != 'TO') or 
+                        (0 > team1_roster.get(cat)[2] and cat == 'TO') %}
+                        <td class="light-green-cell">{{ team1_roster.get(cat)[2] }}</td>
+                    {% elif (0 > team1_roster.get(cat)[2] and cat != 'TO') or 
+                        (team1_roster.get(cat)[2] > 0 and cat == 'TO') %}
+                        <td class="light-red-cell">{{ team1_roster.get(cat)[2] }}</td>
+                    {% else %}
+                        <td>{{ team1_roster.get(cat)[2] }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>{{ team1_roster.get('box_score') }}</h2>
+
+    <!-- This is for the next team -->
+    <h1>Project Trade: {{ teams[1] }}</h1>
+
+    <h2>{{ time_interval }}</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>After Trade</th>
+                <th>Before Trade</th>
+                <th>Category Difference</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in nine_cats %}
+                <tr>
+                    <td><strong>{{ cat }}</strong></td>
+                    <td>{{ partner_team_roster.get(cat)[0] }}</td>
+                    <td>{{ partner_team_roster.get(cat)[1] }}</td>
+                    {% if (partner_team_roster.get(cat)[2] > 0 and cat != 'TO') or 
+                        (0 > partner_team_roster.get(cat)[2] and cat == 'TO') %}
+                        <td class="light-green-cell">{{ partner_team_roster.get(cat)[2] }}</td>
+                    {% elif (0 > partner_team_roster.get(cat)[2] and cat != 'TO') or 
+                        (partner_team_roster.get(cat)[2] > 0 and cat == 'TO') %}
+                        <td class="light-red-cell">{{ partner_team_roster.get(cat)[2] }}</td>
+                    {% else %}
+                        <td>{{ partner_team_roster.get(cat)[2] }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>{{ partner_team_roster.get('box_score') }}</h2>
+
+    <!-- Add more for projecting before and after against all teams -->
+</body>
+</html>

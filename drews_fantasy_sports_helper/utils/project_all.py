@@ -1,6 +1,6 @@
 from flask import render_template
 from .project_matchup import project_matchup
-from ..constants import ANDREW_ID, IR_MAP, NINE_CATS, TEAM_NAMES, AvgStatIntervals
+from ..constants import ANDREW_ID, NINE_CATS, TEAM_NAMES, AvgStatIntervals
 
 PLAYER_AVG_STAT_INTERVALS = AvgStatIntervals()
 
@@ -11,8 +11,7 @@ def generate_all_projections(id, time_interval):
             continue
         matchup_map = project_matchup(id, 
                                       opponent_team_id, 
-                                      time_interval, 
-                                      (IR_MAP.get(id), IR_MAP.get(opponent_team_id)), 
+                                      time_interval,
                                       False)
         ALL_MATCHUPS[(id, opponent_team_id)] = matchup_map
         

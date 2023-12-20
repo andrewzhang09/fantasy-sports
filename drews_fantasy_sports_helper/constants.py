@@ -49,19 +49,3 @@ class AvgStatIntervals:
         self.LAST_7  = '2024_last_7'
         self.TOTAL = '2024_total'
         self.PROJECTED = '2024_projected'
-
-## DEPRECATE IN FUTURE
-IR_MAP = {
-    JUSTIN_ID: None,
-    ERKAN_ID: 'Jalen Duren',
-    ALBERT_ID: 'Wendell Carter Jr.',
-    ANTHONY_ID: 'Jalen Johnson',
-    VIJAY_ID: 'Bradley Beal',
-    SADYANT_ID: None,
-    JEFFREY_ID: None,
-    ETHAN_ID: 'Marcus Smart',
-    LUCAS_ID: 'Mitchell Robinson',
-    ALLAN_ID: 'Bam Adebayo',
-    ERNESTO_ID: None,
-    ANDREW_ID: 'Kristaps Porzingis'
-}
