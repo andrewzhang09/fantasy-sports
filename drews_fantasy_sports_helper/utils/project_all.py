@@ -13,7 +13,7 @@ def generate_all_projections(id, time_interval):
                                       opponent_team_id, 
                                       time_interval, 
                                       (IR_MAP.get(id), IR_MAP.get(opponent_team_id)), 
-                                      True)
+                                      False)
         ALL_MATCHUPS[(id, opponent_team_id)] = matchup_map
         
     return ALL_MATCHUPS
@@ -21,6 +21,7 @@ def generate_all_projections(id, time_interval):
 # GET /all-projections
 def all_projections_handler():
     # generate_all_projections(id, time_interval)
+    # TODO: change so we don't have to manually code the inputs
     ALL_MATCHUPS = generate_all_projections(ANDREW_ID, PLAYER_AVG_STAT_INTERVALS.LAST_30)
     return render_template('all_projections.html',
                            all_matchups=ALL_MATCHUPS,

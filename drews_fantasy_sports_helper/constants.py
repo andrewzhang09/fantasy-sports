@@ -63,5 +63,5 @@ IR_MAP = {
     LUCAS_ID: 'Mitchell Robinson',
     ALLAN_ID: 'Bam Adebayo',
     ERNESTO_ID: None,
-    ANDREW_ID: None
+    ANDREW_ID: 'Kristaps Porzingis'
 }

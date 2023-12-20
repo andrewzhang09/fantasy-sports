@@ -1,51 +1,68 @@
-from ..constants import ANDREW_ID, VIJAY_ID, FIRST_DAY, CATEGORIES, NINE_CATS, TEAM_MAP, TEAM_NAMES, AvgStatIntervals
+from ..constants import ANDREW_ID, VIJAY_ID, CATEGORIES, NINE_CATS, TEAM_MAP, TEAM_NAMES, AvgStatIntervals, TT_LEAGUE
 from flask import render_template
-from .helpers import get_projections
+from .helpers import get_projections, calculate_fg_ft_percentage, fetch_curr_box_score, calculate_win_loss
+
+from pprint import pprint
 
 PLAYER_AVG_STAT_INTERVALS = AvgStatIntervals()
 
-def project_matchup(id1, opponent_team_id, time_interval, ir, four_game_proj=False):
+def project_matchup(id1, opponent_team_id, time_interval, ir, is_curr_matchup=False):
     # NOTE: ID1 IS YOUR TEAM
     # ex. time_interval: last 7, last 15
-    # TODO: if current_matchup is True, add cats to current box score
     opponent_team_name = TEAM_MAP.get(opponent_team_id).get('team_name')
     print(TEAM_MAP.get(id1).get('team_name') + ' vs. ' + opponent_team_name)
+    
+    MATCHUP_MAP = {}
+    if is_curr_matchup:
+        # fetch current box score
+        fetch_curr_box_score(MATCHUP_MAP, id1)
+        print('This is current box score: ')
+        pprint(MATCHUP_MAP)
 
-    team1_projections = get_projections(id1, time_interval, ir, four_game_proj)
-    team2_projections = get_projections(opponent_team_id, time_interval, ir, four_game_proj)
+    # THESE INCLUDE FTM, FTA, ETC. CALCULATE AT THE END
+    team1_projections = get_projections(id1, time_interval, ir, is_curr_matchup)
+    team2_projections = get_projections(opponent_team_id, time_interval, ir, is_curr_matchup)
     print(time_interval)
 
-    category_wins, category_ties, category_losses = 0, 0, 0
-    MATCHUP_MAP = {}
-    for cat in NINE_CATS:
-        if team1_projections.get(cat) > team2_projections.get(cat):
-            if cat == 'TO':
-                category_losses += 1
+    for cat in CATEGORIES:
+        if is_curr_matchup:
+            # for current matchup, add current stats to projections for rest of week
+            curr_team1_stats, curr_team2_stats, _ = MATCHUP_MAP[cat]
+            proj_team1_total, proj_team2_total = curr_team1_stats + team1_projections.get(cat), curr_team2_stats + team2_projections.get(cat)
+            if cat in ['FGM', 'FGA', 'FTM', 'FTA']:
+                # cat diff does not matter because we are calculating ft% and fg%
+                cat_diff = 0
             else:
-                category_wins += 1
-        elif team1_projections.get(cat) == team2_projections.get(cat):
-            category_ties += 1
+                cat_diff = proj_team1_total - proj_team2_total 
+            MATCHUP_MAP[cat] = (proj_team1_total, proj_team2_total, cat_diff)
         else:
-            if cat == 'TO':
-                category_wins += 1
+            if cat in ['FGM', 'FGA', 'FTM', 'FTA']:
+                cat_diff = 0
             else:
-                category_losses += 1
-        cat_diff = team1_projections.get(cat) - team2_projections.get(cat)
-        MATCHUP_MAP[cat] = (round(team1_projections.get(cat), 4),
-                            round(team2_projections.get(cat), 4),
-                            round(cat_diff, 4))
+                cat_diff = team1_projections.get(cat) - team2_projections.get(cat)
+            MATCHUP_MAP[cat] = (team1_projections.get(cat), team2_projections.get(cat), cat_diff)
     
-    print(str(category_wins) + '-' + str(category_losses) + '-' + str(category_ties))
+    calculate_fg_ft_percentage(MATCHUP_MAP)
+    category_wins, category_losses, category_ties = calculate_win_loss(MATCHUP_MAP)
+
+    for cat in NINE_CATS:
+        team1_stats, team2_stats, cat_diff = MATCHUP_MAP.get(cat)
+        MATCHUP_MAP[cat] = (round(team1_stats, 4), round(team2_stats, 4), round(cat_diff, 4))
+        
     MATCHUP_MAP['box_score'] = str(category_wins) + '-' + str(category_losses) + '-' + str(category_ties)
+    pprint(MATCHUP_MAP)
+    print(MATCHUP_MAP.get('box_score'))
     return MATCHUP_MAP
 
 
 # GET /project-matchup
 def project_matchup_handler():
+    # TODO: change so that we don't manually have to code in inputs
     MATCHUP_MAP = project_matchup(ANDREW_ID, 
                                   VIJAY_ID, 
                                   PLAYER_AVG_STAT_INTERVALS.LAST_30, 
-                                  (None, 'Bradley Beal'))
+                                  ('Kristaps Porzingis', 'Bradley Beal'),
+                                  True)
     return render_template('project_matchup.html', 
                            matchup_map=MATCHUP_MAP, 
                            teams=[TEAM_NAMES.get(ANDREW_ID), TEAM_NAMES.get(VIJAY_ID)],
