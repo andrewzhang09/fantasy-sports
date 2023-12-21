@@ -95,4 +95,6 @@ def project_trade_handler():
                     time_interval=time_interval,
                     nine_cats=NINE_CATS,
                     post_trade_matchup_maps=POST_TRADE_ALL_TEAMS_MAP,
-                    team_names=TEAM_NAMES)
+                    team_names=TEAM_NAMES,
+                    players_trading=trading_player_names,
+                    players_receiving=receiving_player_names)

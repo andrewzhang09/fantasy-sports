@@ -24,6 +24,20 @@
 
     <h2>{{ time_interval }}</h2>
 
+    <h2>Players Trading</h2>
+    <ul>
+        {% for player in players_trading %}
+            <li>{{ player }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Players Receiving</h2>
+    <ul>
+        {% for player in players_receiving %}
+            <li>{{ player }}</li>
+        {% endfor %}
+    </ul>
+
     <table border="1">
         <thead>
             <tr>
@@ -56,6 +70,7 @@
     <h2>{{ team1_roster.get('box_score') }}</h2>
 
     <!-- Add more for projecting before and after against all teams -->
+    <h2>Improvements After Trade</h2>
     <table border="1">
         <thead>
             <tr class="all-matchup-table-row">
@@ -74,6 +89,39 @@
                         {% if matchup_dict.get(cat)[3] == 1 %}
                             <td class="light-green-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
                         {% elif matchup_dict.get(cat)[3] == -1 %}
+                            <td class="light-red-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% else %}
+                            <td>{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>{{ matchup_dict.get('box_score') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- How does your team stand against all teams after trade-->
+    <h2>How does your team stand against all teams post-trade?</h2>
+    <table border="1">
+        <thead>
+            <tr class="all-matchup-table-row">
+                <th>Team</th>
+                {% for cat in nine_cats %}
+                    <th>{{ cat }}</th>
+                {% endfor %}
+                <th>Record Against</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for id_tuple, matchup_dict in post_trade_matchup_maps.items() %}
+                <tr class="all-matchup-table-row">
+                    <td><strong>{{ team_names.get(id_tuple[1]) }}</strong></td>
+                    {% for cat in nine_cats %}
+                        {% if (matchup_dict.get(cat)[0] > matchup_dict.get(cat)[1] and cat != 'TO') or 
+                            (cat == 'TO' and matchup_dict.get(cat)[1] > matchup_dict.get(cat)[0]) %}
+                            <td class="light-green-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% elif (matchup_dict.get(cat)[1] > matchup_dict.get(cat)[0] and cat != 'TO') or 
+                            (cat == 'TO' and matchup_dict.get(cat)[0] > matchup_dict.get(cat)[1])%}
                             <td class="light-red-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
                         {% else %}
                             <td>{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
