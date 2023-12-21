@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Projections</title>
+
+    <style>
+        tr {
+            height: 50px;
+        }
+        .light-green-cell {
+            background-color: #c8e6c9; /* Light green color */
+        }
+
+        .light-red-cell {
+            background-color: #ffcdd2; /* Light red color */
+        }
+    </style>
+</head>
+<body>
+    <h1>Project All Matchups: {{ team }} vs. All</h1>
+
+    <h2>{{ time_interval }}</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Team</th>
+                {% for cat in nine_cats %}
+                    <th>{{ cat }}</th>
+                {% endfor %}
+                <th>Record Against</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for id_tuple, matchup_dict in all_matchups.items() %}
+                <tr>
+                    <td><strong>{{ team_names.get(id_tuple[1]) }}</strong></td>
+                    {% for cat in nine_cats %}
+                        {% if (matchup_dict.get(cat)[0] > matchup_dict.get(cat)[1] and cat != 'TO') or 
+                            (cat == 'TO' and matchup_dict.get(cat)[1] > matchup_dict.get(cat)[0]) %}
+                            <td class="light-green-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% elif (matchup_dict.get(cat)[1] > matchup_dict.get(cat)[0] and cat != 'TO') or 
+                            (cat == 'TO' and matchup_dict.get(cat)[0] > matchup_dict.get(cat)[1])%}
+                            <td class="light-red-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% else %}
+                            <td>{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>{{ matchup_dict.get('box_score') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
