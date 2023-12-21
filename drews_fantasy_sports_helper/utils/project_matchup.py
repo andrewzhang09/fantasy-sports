@@ -25,9 +25,9 @@ def project_matchup(id1, opponent_team_id, time_interval, is_curr_matchup=False,
         team1_projections = get_projections(id1, time_interval, is_curr_matchup)
         team2_projections = get_projections(opponent_team_id, time_interval, is_curr_matchup)
     else:
-        # team1 is after trade, team2 is before trade
+        # team1 is after trade, team2 is either your team before trade or an opponent team
         team1_projections = get_projections(id1, time_interval, is_curr_matchup, trade_dict)
-        team2_projections = get_projections(id1, time_interval, is_curr_matchup)
+        team2_projections = get_projections(opponent_team_id, time_interval, is_curr_matchup)
 
     print(time_interval)
 
@@ -69,6 +69,7 @@ def project_matchup_handler():
                                   VIJAY_ID, 
                                   PLAYER_AVG_STAT_INTERVALS.LAST_30,
                                   True)
+    # TODO: add streaming candidates for each cat that you want to bolster
     return render_template('project_matchup.html', 
                            matchup_map=MATCHUP_MAP, 
                            teams=[TEAM_NAMES.get(ANDREW_ID), TEAM_NAMES.get(VIJAY_ID)],

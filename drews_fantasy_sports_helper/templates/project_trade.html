@@ -7,6 +7,9 @@
     <title>Project Matchup</title>
 
     <style>
+        .all-matchup-table-row {
+            height: 50px;
+        }
         .light-green-cell {
             background-color: #c8e6c9; /* Light green color */
         }
@@ -52,42 +55,34 @@
 
     <h2>{{ team1_roster.get('box_score') }}</h2>
 
-    <!-- This is for the next team -->
-    <h1>Project Trade: {{ teams[1] }}</h1>
-
-    <h2>{{ time_interval }}</h2>
-
+    <!-- Add more for projecting before and after against all teams -->
     <table border="1">
         <thead>
-            <tr>
-                <th>Category</th>
-                <th>After Trade</th>
-                <th>Before Trade</th>
-                <th>Category Difference</th>
+            <tr class="all-matchup-table-row">
+                <th>Team</th>
+                {% for cat in nine_cats %}
+                    <th>{{ cat }}</th>
+                {% endfor %}
+                <th>Record Against</th>
             </tr>
         </thead>
         <tbody>
-            {% for cat in nine_cats %}
-                <tr>
-                    <td><strong>{{ cat }}</strong></td>
-                    <td>{{ partner_team_roster.get(cat)[0] }}</td>
-                    <td>{{ partner_team_roster.get(cat)[1] }}</td>
-                    {% if (partner_team_roster.get(cat)[2] > 0 and cat != 'TO') or 
-                        (0 > partner_team_roster.get(cat)[2] and cat == 'TO') %}
-                        <td class="light-green-cell">{{ partner_team_roster.get(cat)[2] }}</td>
-                    {% elif (0 > partner_team_roster.get(cat)[2] and cat != 'TO') or 
-                        (partner_team_roster.get(cat)[2] > 0 and cat == 'TO') %}
-                        <td class="light-red-cell">{{ partner_team_roster.get(cat)[2] }}</td>
-                    {% else %}
-                        <td>{{ partner_team_roster.get(cat)[2] }}</td>
-                    {% endif %}
+            {% for id_tuple, matchup_dict in post_trade_matchup_maps.items() %}
+                <tr class="all-matchup-table-row">
+                    <td><strong>{{ team_names.get(id_tuple[1]) }}</strong></td>
+                    {% for cat in nine_cats %}
+                        {% if matchup_dict.get(cat)[3] == 1 %}
+                            <td class="light-green-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% elif matchup_dict.get(cat)[3] == -1 %}
+                            <td class="light-red-cell">{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% else %}
+                            <td>{{ matchup_dict.get(cat)[1] }}  ({{ matchup_dict.get(cat)[2] }})</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>{{ matchup_dict.get('box_score') }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <h2>{{ partner_team_roster.get('box_score') }}</h2>
-
-    <!-- Add more for projecting before and after against all teams -->
 </body>
 </html>

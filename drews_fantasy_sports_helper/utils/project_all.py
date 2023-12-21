@@ -21,10 +21,11 @@ def generate_all_projections(id, time_interval):
 def all_projections_handler():
     # generate_all_projections(id, time_interval)
     # TODO: change so we don't have to manually code the inputs
-    ALL_MATCHUPS = generate_all_projections(ANDREW_ID, PLAYER_AVG_STAT_INTERVALS.LAST_30)
+    time_interval = PLAYER_AVG_STAT_INTERVALS.TOTAL
+    ALL_MATCHUPS = generate_all_projections(ANDREW_ID, time_interval)
     return render_template('all_projections.html',
                            all_matchups=ALL_MATCHUPS,
                            team=TEAM_NAMES.get(ANDREW_ID),
-                           time_interval=PLAYER_AVG_STAT_INTERVALS.LAST_30,
+                           time_interval=time_interval,
                            nine_cats=NINE_CATS,
                            team_names=TEAM_NAMES)
