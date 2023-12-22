@@ -93,16 +93,22 @@ def get_projections(team_id, time_interval, is_curr_matchup=False, trade_dict={}
 
     ROSTER_STATS = {cat: 0 for cat in CATEGORIES}
     team_roster = TEAM_MAP.get(team_id).get('roster', [])
-    for player in team_roster:
-        if player.lineupSlot == 'IR':
-            continue
-        sched = player.schedule
-        # standardize projections to 4 games for each player
-        if not is_curr_matchup:
-            num_games = 4
-        else:
-            # is curr matchup, find all the remaining games left in the week
+    for i in range(len(team_roster)):
+        player = team_roster[i]
+        # TODO: add feature where you can choose whether a player is out for long period of time or not
+        if is_curr_matchup:
+            if player.injuryStatus == 'OUT':
+                continue
+            sched = player.schedule
             num_games = get_player_num_games(datetime.datetime.now(), sched)
+        # Project all/Project trade when there is player on IR
+        # -> we want to exclude the last person on roster which is likely a stream
+        # TODO: add feature where you can choose which player to keep or not
+        else:
+            if i == 13:
+                continue
+            num_games = 4
+
         player_avg_stats = player.stats.get(time_interval, {})
         # Player that has not played this season will not have the 'avg' field
         if 'avg' not in player_avg_stats:

@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..constants import AvgStatIntervals, NINE_CATS, ANDREW_ID, ERKAN_ID, TT_LEAGUE, TEAM_NAMES
+from ..constants import AvgStatIntervals, NINE_CATS, ANDREW_ID, ERKAN_ID, TT_LEAGUE, TEAM_NAMES, LUCAS_ID
 from .project_matchup import project_matchup
 from .project_all import generate_all_projections
 
@@ -79,7 +79,7 @@ def project_trade(id1, time_interval, trading_player_names, receiving_player_nam
 # GET /project-trade
 def project_trade_handler():
     # TODO: change so that we don't manually have to code in inputs
-    trading_player_names, receiving_player_names = ['Keldon Johnson', 'Karl-Anthony Towns'], ['Dennis Schroder', "De'Aaron Fox"]
+    trading_player_names, receiving_player_names = ['Keldon Johnson'], ['Dennis Schroder']
     # trade projections are done using season avg's or projections, because that's the only fields for avg's that League.player_info() returns
     time_interval = PlayerAvgStatIntervals.TOTAL
     team1_roster_stats = project_trade(ANDREW_ID,
@@ -91,11 +91,11 @@ def project_trade_handler():
                                                              trading_player_names, 
                                                              receiving_player_names)
     return render_template('project_trade.html',
-                    team1_roster=team1_roster_stats,
-                    teams=[TEAM_NAMES.get(ANDREW_ID), TEAM_NAMES.get(ERKAN_ID)],
-                    time_interval=time_interval,
-                    nine_cats=NINE_CATS,
-                    post_trade_matchup_maps=POST_TRADE_ALL_TEAMS_MAP,
-                    team_names=TEAM_NAMES,
-                    players_trading=trading_player_names,
-                    players_receiving=receiving_player_names)
+                            team1_roster=team1_roster_stats,
+                            teams=[TEAM_NAMES.get(ANDREW_ID), TEAM_NAMES.get(ERKAN_ID)],
+                            time_interval=time_interval,
+                            nine_cats=NINE_CATS,
+                            post_trade_matchup_maps=POST_TRADE_ALL_TEAMS_MAP,
+                            team_names=TEAM_NAMES,
+                            players_trading=trading_player_names,
+                            players_receiving=receiving_player_names)
