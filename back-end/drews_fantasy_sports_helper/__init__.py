@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 
-app = Flask(__name__)
+def initialize_app():
+    app = Flask(__name__)
+    CORS(app)
 
-from drews_fantasy_sports_helper.routes import main_bp
+    from drews_fantasy_sports_helper.routes import main_bp
+    app.register_blueprint(main_bp)
 
-app.register_blueprint(main_bp)
-
-import drews_fantasy_sports_helper.routes
+    return app

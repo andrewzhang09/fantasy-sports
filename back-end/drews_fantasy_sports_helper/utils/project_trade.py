@@ -81,7 +81,7 @@ def project_trade_handler():
     # TODO: change so that we don't manually have to code in inputs
     trading_player_names, receiving_player_names = ['Keldon Johnson'], ['Dennis Schroder']
     # trade projections are done using season avg's or projections, because that's the only fields for avg's that League.player_info() returns
-    time_interval = PlayerAvgStatIntervals.TOTAL
+    time_interval = PlayerAvgStatIntervals.LAST_15
     team1_roster_stats = project_trade(ANDREW_ID,
                                        time_interval,
                                        trading_player_names,
