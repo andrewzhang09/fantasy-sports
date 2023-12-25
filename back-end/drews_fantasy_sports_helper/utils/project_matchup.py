@@ -1,4 +1,4 @@
-from ..constants import ANDREW_ID, VIJAY_ID, CATEGORIES, NINE_CATS, TEAM_MAP, TEAM_NAMES, AvgStatIntervals, TT_LEAGUE
+from ..constants import ANDREW_ID, ALBERT_ID, CATEGORIES, NINE_CATS, TEAM_MAP, TEAM_NAMES, AvgStatIntervals, TT_LEAGUE
 from flask import render_template
 from .helpers import get_projections, calculate_fg_ft_percentage, fetch_curr_box_score, calculate_win_loss
 
@@ -34,7 +34,7 @@ def project_matchup(id1, opponent_team_id, time_interval, is_curr_matchup=False,
     for cat in CATEGORIES:
         if is_curr_matchup:
             # for current matchup, add current stats to projections for rest of week
-            curr_team1_stats, curr_team2_stats, _ = MATCHUP_MAP[cat]
+            curr_team1_stats, curr_team2_stats, _ = MATCHUP_MAP.get(cat, (0, 0, 0))
             proj_team1_total, proj_team2_total = curr_team1_stats + team1_projections.get(cat), curr_team2_stats + team2_projections.get(cat)
             if cat in ['FGM', 'FGA', 'FTM', 'FTA']:
                 # cat diff does not matter because we are calculating ft% and fg%
@@ -66,12 +66,12 @@ def project_matchup(id1, opponent_team_id, time_interval, is_curr_matchup=False,
 def project_matchup_handler():
     # TODO: change so that we don't manually have to code in inputs
     MATCHUP_MAP = project_matchup(ANDREW_ID, 
-                                  VIJAY_ID, 
-                                  PLAYER_AVG_STAT_INTERVALS.LAST_30,
+                                  ALBERT_ID, 
+                                  PLAYER_AVG_STAT_INTERVALS.LAST_15,
                                   True)
     # TODO: add streaming candidates for each cat that you want to bolster
     return render_template('project_matchup.html', 
                            matchup_map=MATCHUP_MAP, 
-                           teams=[TEAM_NAMES.get(ANDREW_ID), TEAM_NAMES.get(VIJAY_ID)],
-                           time_interval=PLAYER_AVG_STAT_INTERVALS.LAST_30,
+                           teams=[TEAM_NAMES.get(ANDREW_ID), TEAM_NAMES.get(ALBERT_ID)],
+                           time_interval=PLAYER_AVG_STAT_INTERVALS.LAST_15,
                            nine_cats=NINE_CATS)

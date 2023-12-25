@@ -41,15 +41,26 @@ def fetch_curr_box_score(MATCHUP_MAP, id1):
     for box_score in TT_LEAGUE.box_scores():
         if box_score.home_team.team_id == id1:
             for cat in CATEGORIES:
-                team1_cat = box_score.home_stats.get(cat).get('value')
-                team2_cat = box_score.away_stats.get(cat).get('value')
+                # Error: If it is Monday, then there will be no box score
+                team1_cat = box_score.home_stats.get(cat)
+                team2_cat = box_score.away_stats.get(cat)
+                if not team1_cat or not team2_cat:
+                    MATCHUP_MAP[cat] = (0, 0, 0)
+                    return
+                team1_cat = team1_cat.get('value')
+                team2_cat = team2_cat.get('value')
                 # we will calculate cat_diff at the end, set to 0 for now
                 MATCHUP_MAP[cat] = (team1_cat, team2_cat, 0)
             break
         elif box_score.away_team.team_id == id1:
             for cat in CATEGORIES:
-                team1_cat = box_score.away_stats.get(cat).get('value')
-                team2_cat = box_score.home_stats.get(cat).get('value')
+                team1_cat = box_score.away_stats.get(cat)
+                team2_cat = box_score.home_stats.get(cat)
+                if not team1_cat or not team2_cat:
+                    MATCHUP_MAP[cat] = (0, 0, 0)
+                    return
+                team1_cat = team1_cat.get('value')
+                team2_cat = team2_cat.get('value')
                 MATCHUP_MAP[cat] = (team1_cat, team2_cat, 0)
             break
 
