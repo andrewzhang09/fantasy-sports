@@ -6,6 +6,8 @@ from ..utils.project_matchup import project_matchup_handler
 from ..utils.project_all import all_projections_handler
 from ..utils.project_trade import project_trade_handler
 
+from pprint import pprint
+
 @main_bp.route('/')
 def home():
     return 'This is a fantasy sports helper, designed by Drew'
@@ -15,12 +17,19 @@ def submit_home_form():
     try:
         data = request.get_json()
         print('Received form data:', data)
-        league_id, year, swid, espn_s2 = data.get('league_id'), data.get('year'), data.get('swid'), data.get('espn_s2')
+        league_id, year, swid, espn_s2 = int(data.get('league_id')), int(data.get('year')), data.get('swid'), data.get('espn_s2')
         TT_LEAGUE = League(league_id=league_id, year=year, espn_s2=espn_s2, swid=swid)
-        print(TT_LEAGUE.teams)
+        TEAM_MAP = {}
+        for team in TT_LEAGUE.teams:
+            team_dict = vars(team)
+            del team_dict['roster']
+            del team_dict['schedule']
+            TEAM_MAP[team.team_id] = team_dict
+        # these attributes contain non serializable objects (players, matchups)
+        pprint(TEAM_MAP)
         response = jsonify({'success': True, 
                             'message': 'Form submitted successfully',
-                            'teams': TT_LEAGUE.teams})
+                            'teams': TEAM_MAP})
         return response
     except Exception as e:
         print('Error processing form data:', str(e))

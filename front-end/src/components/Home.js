@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import HomeForm from './homeForm';
+
+// TODO: make default values in field semi transparent
 
 const Home = () => {
     const [formData, setFormData] = useState({
-        league_id: 1,
-        year: 2024,
+        league_id: '',
+        year: '',
         swid: '',
         espn_s2: '',
     })
@@ -15,7 +18,8 @@ const Home = () => {
         setFormData({...formData, [name]: value });
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
             const response = await fetch('http://127.0.0.1:5000/submitHomeForm', {
                 method: 'POST',
@@ -38,52 +42,13 @@ const Home = () => {
     };
 
     return (
-        <div>
-          <h1>My App</h1>
-          <form onSubmit={handleSubmit}>
-            <label>
-              League ID:
-              <input
-                type="text"
-                name="league_id"
-                value={formData.league_id}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              Year:
-              <input
-                type="text"
-                name="year"
-                value={formData.year}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              SWID:
-              <input
-                type="text"
-                name="swid"
-                value={formData.swid}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              ESPN S2:
-              <input
-                type="text"
-                name="espn_s2"
-                value={formData.espn_s2}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <button type="submit">Submit</button>
-          </form>
-        </div>
+      <>
+        <HomeForm 
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+        />
+      </>
     );
 };
 
