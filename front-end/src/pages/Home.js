@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import HomeForm from './homeForm';
+import HomeForm from '../components/homeForm';
 import '../styles/Home.css';
 
 // TODO: make default values in field semi transparent
