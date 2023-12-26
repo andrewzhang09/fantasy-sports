@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import HomeForm from './homeForm';
+import '../styles/Home.css';
 
 // TODO: make default values in field semi transparent
 
@@ -11,7 +12,17 @@ const Home = () => {
         espn_s2: '',
     })
 
-    const [teams, setTeams] = useState([]);
+    const [formSubmitted, setFormSubmitted] = useState(false);
+
+    const [teams, setTeams] = useState({});
+
+    const [selectedTeam, setSelectedTeam] = useState(null);
+
+    // TODO: resubmitting form should reset the options
+    const handleTeamChange = (teamId) => {
+      console.log(teamId);
+      setSelectedTeam(teamId);
+    }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -35,6 +46,7 @@ const Home = () => {
             // teams are under the 'teams' key in the response
             if (result.teams) {
                 setTeams(result.teams);
+                setFormSubmitted(true);
             }
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -42,13 +54,46 @@ const Home = () => {
     };
 
     return (
-      <>
-        <HomeForm 
-          formData={formData}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-        />
-      </>
+      <div>
+        <div className="centered-components">
+          <HomeForm 
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+          />
+        </div>
+        <div className="centered-components">
+          {formSubmitted && (
+            <>
+              <h2>Select a Team:</h2>
+              {Object.keys(teams).map((teamKey) => {
+                const team = teams[teamKey];
+                return (
+                  <label>
+                    <input
+                      type="radio"
+                      name="selectedTeam"
+                      value={team.team_id}
+                      checked={selectedTeam === team.team_id}
+                      onChange={() => handleTeamChange(team.team_id)}
+                    />
+                    {team.team_name}
+                  </label>
+                );
+              })}
+            </>
+          )}
+        </div>
+        <div className="button-container">
+          {selectedTeam && (
+            <>
+              <button onClick={() => window.location.href = 'https://dummy-url-1.com'}>All Projections</button>
+              <button onClick={() => window.location.href = 'https://dummy-url-2.com'}>Project Current Matchup</button>
+              <button onClick={() => window.location.href = 'https://dummy-url-3.com'}>Project Trade</button>
+            </>
+          )}
+        </div>
+      </div>
     );
 };
 
