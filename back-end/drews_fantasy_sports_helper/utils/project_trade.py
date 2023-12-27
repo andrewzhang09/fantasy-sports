@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, current_app, session
 
 from ..constants import AvgStatIntervals, NINE_CATS, ANDREW_ID, ERKAN_ID, TT_LEAGUE, TEAM_NAMES, LUCAS_ID
 from .project_matchup import project_matchup
@@ -8,8 +8,9 @@ PlayerAvgStatIntervals = AvgStatIntervals()
 
 
 def create_trade_map(trading_player_names, receiving_player_names):
-    players_trading = [TT_LEAGUE.player_info(name) for name in trading_player_names]
-    players_receiving = [TT_LEAGUE.player_info(name) for name in receiving_player_names]
+    LEAGUE = session.get('TT_LEAGUE', {})
+    players_trading = [LEAGUE.player_info(name) for name in trading_player_names]
+    players_receiving = [LEAGUE.player_info(name) for name in receiving_player_names]
     return {
         'trade': players_trading,
         'receive': players_receiving

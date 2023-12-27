@@ -1,17 +1,19 @@
 from ..constants import ANDREW_ID, ALBERT_ID, CATEGORIES, NINE_CATS, TEAM_MAP, TEAM_NAMES, AvgStatIntervals, TT_LEAGUE
 from flask import render_template
-from .helpers import get_projections, calculate_fg_ft_percentage, fetch_curr_box_score, calculate_win_loss
+from .helpers import fetch_team, get_projections, calculate_fg_ft_percentage, fetch_curr_box_score, calculate_win_loss
 
 from pprint import pprint
 
 PLAYER_AVG_STAT_INTERVALS = AvgStatIntervals()
 
-# TODO: abstract away calls to TEAM_MAP
 def project_matchup(id1, opponent_team_id, time_interval, is_curr_matchup=False, trade_dict={}):
     # NOTE: ID1 IS YOUR TEAM
     # ex. time_interval: last 7, last 15
-    opponent_team_name = TEAM_MAP.get(opponent_team_id).get('team_name')
-    print(TEAM_MAP.get(id1).get('team_name') + ' vs. ' + opponent_team_name)
+    YOUR_TEAM = fetch_team(id1)
+    OPPONENT_TEAM = fetch_team(opponent_team_id)
+    opponent_team_name = OPPONENT_TEAM.team_name
+    your_team_name = YOUR_TEAM.team_name
+    print(your_team_name + ' vs. ' + opponent_team_name)
     
     MATCHUP_MAP = {}
     if is_curr_matchup:

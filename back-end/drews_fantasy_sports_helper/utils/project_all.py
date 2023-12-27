@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, current_app, session
 from .project_matchup import project_matchup
 from ..constants import AvgStatIntervals
 
@@ -6,8 +6,10 @@ PLAYER_AVG_STAT_INTERVALS = AvgStatIntervals()
 
 def generate_all_projections(id, time_interval):
     ALL_MATCHUPS = {}
-    # TODO: make this more dynamic? eg. what if id's are not 1->12 or if there are not 12 teams
-    for opponent_team_id in range(1, 13):
+    LEAGUE_TEAMS = session.get('TEAMS', [])
+    print('League Teams: ', LEAGUE_TEAMS)
+    for team in LEAGUE_TEAMS:
+        opponent_team_id = team.team_id
         if opponent_team_id == id:
             continue
         matchup_map = project_matchup(id, 

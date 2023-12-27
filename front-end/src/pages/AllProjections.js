@@ -17,19 +17,18 @@ const AllProjections = () => {
         try {
             const response = await fetch(`http://127.0.0.1:5000/all-projections?teamId=${teamId}&timeInterval=${timeInterval}`);
             const data = await response.json();
+            console.log(data);
             const matchupMap = data.matchup_map;
             const timeIntervals = data.time_intervals;
             setMatchupMap(matchupMap);
             setTimeIntervals(timeIntervals);
-            console.log(matchupMap);
-            console.log(timeIntervals);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
     fetchData();
-    
+
     }, [teamId, timeInterval]);
 
   // Render your component with the fetched data

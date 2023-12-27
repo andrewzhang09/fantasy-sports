@@ -1,3 +1,5 @@
+from flask import current_app, session
+
 import datetime
 from pprint import pprint
 
@@ -5,8 +7,19 @@ from ..constants import FIRST_DAY, CATEGORIES, NINE_CATS, TEAM_MAP, TT_LEAGUE, A
 
 PlayerAvgStatIntervals = AvgStatIntervals()
 
+
+def fetch_team(team_id):
+    LEAGUE_TEAMS = session.get('TEAMS', [])
+    if not LEAGUE_TEAMS:
+        return
+    for team in LEAGUE_TEAMS:
+        if team.team_id == team_id:
+            return team
+
+
 def get_opponent_team_id(id1, matchup_num):
-    team1_sched = TEAM_MAP.get(id1).get('schedule')
+    team = fetch_team(id1)
+    team1_sched = team.schedule
     home_team = team1_sched[matchup_num - 1].home_team
     # if YOUR team is home team
     if home_team.team_id == id1:
@@ -101,9 +114,10 @@ def get_projections(team_id, time_interval, is_curr_matchup=False, trade_dict={}
     # ERRORS: PLAYER MIGHT NOT HAVE 'time_interval' FIELD (eg. '2024 projections') eg. Goga Bitadze
     # ERRORS: PLAYER MIGHT NOT HAVE 'avg' field in their player.stats.get('time_interval') eg. Ja Morant
     # ANOTHER ERROR: player might not have a certain stat (eg. center with 3ptm) eg. Ivica Zubac
-
+    
+    team = fetch_team(team_id)
+    team_roster = team.roster
     ROSTER_STATS = {cat: 0 for cat in CATEGORIES}
-    team_roster = TEAM_MAP.get(team_id).get('roster', [])
     for i in range(len(team_roster)):
         player = team_roster[i]
         # TODO: add feature where you can choose whether a player is out for long period of time or not
