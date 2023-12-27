@@ -1,4 +1,5 @@
 from flask import jsonify, current_app, session
+
 from .project_matchup import project_matchup
 from ..constants import AvgStatIntervals
 
@@ -24,6 +25,9 @@ def generate_all_projections(id, time_interval):
 def all_projections_handler(request):
     team_id = request.args.get('teamId')
     time_interval = request.args.get('timeInterval')
+    # TODO: add league id as a request arg
+
+    # TODO: check if we are fetching team_id and time_interval
     ALL_MATCHUPS = generate_all_projections(team_id, time_interval)
 
     response = jsonify({'success': True, 
