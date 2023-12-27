@@ -4,6 +4,7 @@ from espn_api.basketball import League
 from pprint import pprint
 
 def submit_home_form_handler(request):
+    # TODO: use Flask session to have the TT_LEAGUE object persist across API calls
     try:
         data = request.get_json()
         print('Received form data:', data)

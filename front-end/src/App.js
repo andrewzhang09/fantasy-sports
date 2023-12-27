@@ -9,7 +9,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/all-projections/:teamId" element={<AllProjections />} />
+        <Route path="/all-projections" element={<AllProjections />} />
         <Route path="/" element={<Home />} />
         {/* Other routes can go here */}
       </Routes>

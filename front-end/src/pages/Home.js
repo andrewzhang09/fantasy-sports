@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import HomeForm from '../components/homeForm';
 import '../styles/Home.css';
 
-// TODO: make default values in field semi transparent
 
 const Home = () => {
     const [formData, setFormData] = useState({
@@ -18,12 +19,17 @@ const Home = () => {
 
     const [selectedTeam, setSelectedTeam] = useState(null);
 
-    // TODO: resubmitting form should reset the options
+    const navigate = useNavigate();
+
+    const defaultTimeInterval = '2024_last_30';
+
+    // FOR TEAM SELECTION
     const handleTeamChange = (teamId) => {
       console.log(teamId);
       setSelectedTeam(teamId);
     }
 
+    // FOR FORM
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({...formData, [name]: value });
@@ -52,6 +58,13 @@ const Home = () => {
             console.error('Error submitting form:', error);
         }
     };
+    
+    // BUTTON CLICK HANDLERS
+    const handleAllProjectionsClick = (teamId, timeInterval) => {
+      const url = `/all-projections?teamId=${teamId}&timeInterval=${timeInterval}`;
+      navigate(url);
+    };
+
 
     return (
       <div>
@@ -87,7 +100,9 @@ const Home = () => {
         <div className="button-container">
           {selectedTeam && (
             <>
-              <button onClick={() => window.location.href = 'https://dummy-url-1.com'}>All Projections</button>
+              <button onClick={() => handleAllProjectionsClick(selectedTeam, defaultTimeInterval)}>
+                All Projections
+              </button>
               <button onClick={() => window.location.href = 'https://dummy-url-2.com'}>Project Current Matchup</button>
               <button onClick={() => window.location.href = 'https://dummy-url-3.com'}>Project Trade</button>
             </>

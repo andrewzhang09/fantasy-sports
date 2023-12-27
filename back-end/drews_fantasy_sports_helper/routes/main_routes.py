@@ -14,9 +14,9 @@ def home():
 def submit_home_form():
     return submit_home_form_handler(request)
 
-@main_bp.route('/all-projections')
+@main_bp.route('/all-projections', methods=['GET'])
 def all_projections_route():
-    return all_projections_handler()
+    return all_projections_handler(request)
 
 @main_bp.route('/project-matchup')
 def project_matchup_route():

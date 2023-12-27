@@ -6,7 +6,7 @@ from pprint import pprint
 
 PLAYER_AVG_STAT_INTERVALS = AvgStatIntervals()
 
-
+# TODO: abstract away calls to TEAM_MAP
 def project_matchup(id1, opponent_team_id, time_interval, is_curr_matchup=False, trade_dict={}):
     # NOTE: ID1 IS YOUR TEAM
     # ex. time_interval: last 7, last 15
