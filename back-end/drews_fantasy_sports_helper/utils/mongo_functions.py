@@ -12,10 +12,10 @@ def create_league(league_id, year, teams):
         'teams': teams
     }
     with current_app.app_context():
-        mongo = current_app.extensions['pymongo']
+        mongo = current_app.extensions.get('pymongo')
         mongo.db.leagues.insert_one(league)
 
 def get_teams():
     with current_app.app_context():
-        mongo = current_app.extensions['pymongo']
+        mongo = current_app.extensions.get('pymongo')
         return mongo.db.teams.find()
